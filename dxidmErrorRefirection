@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DXIDM Redirect Handler</title>
+</head>
+<body>
+<h1>DXIDM Error Handler</h1>
+<p>Processing error and redirecting...</p>
+ 
+    <script>
+
+        (function () {
+
+            // Base callback URL
+
+            const callbackUrl = "https://mvax.vodafone.co.uk/app/dxidmCallback";
+ 
+            // Force required values
+
+            const newParams = new URLSearchParams();
+
+            newParams.set("error", "access_denied");
+
+            newParams.set("error_description", "SYS_ERR_DEF");
+ 
+            const finalRedirectUrl = `${callbackUrl}?${newParams.toString()}`;
+ 
+            console.log("Redirecting to:", finalRedirectUrl);
+ 
+            // Redirect immediately (or add timeout if needed)
+
+            window.location.replace(finalRedirectUrl);
+
+        })();
+</script>
+</body>
+</html>
+ 
