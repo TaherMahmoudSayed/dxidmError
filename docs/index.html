@@ -1,40 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DXIDM Redirect Handler</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DXIDM Redirect Handler</title>
 </head>
 <body>
-<h1>DXIDM Error Handler</h1>
-<p>Processing error and redirecting...</p>
- 
-    <script>
+  <h1>DXIDM Error Handler</h1>
+  <p id="status">Processing error. Redirecting in <span id="countdown">30</span> seconds...</p>
 
-        (function () {
+  <p>
+    <a href="#" id="immediate">Redirect now</a> |
+    <a href="#" id="cancel">Cancel redirect</a>
+  </p>
 
-            // Base callback URL
+  <script>
+    (function () {
+      // Base callback URL
+      const callbackUrl = "https://mvax.vodafone.co.uk/app/dxidmCallback";
 
-            const callbackUrl = "https://mvax.vodafone.co.uk/app/dxidmCallback";
- 
-            // Force required values
+      // Force required values
+      const newParams = new URLSearchParams();
+      newParams.set("error", "access_denied");
+      newParams.set("error_description", "SYS_ERR_DEF");
 
-            const newParams = new URLSearchParams();
+      const finalRedirectUrl = `${callbackUrl}?${newParams.toString()}`;
 
-            newParams.set("error", "access_denied");
+      // Countdown (seconds)
+      let seconds = 30;
+      const countdownEl = document.getElementById("countdown");
+      const statusEl = document.getElementById("status");
 
-            newParams.set("error_description", "SYS_ERR_DEF");
- 
-            const finalRedirectUrl = `${callbackUrl}?${newParams.toString()}`;
- 
-            console.log("Redirecting to:", finalRedirectUrl);
- 
-            // Redirect immediately (or add timeout if needed)
+      // Update display immediately
+      countdownEl.textContent = seconds;
 
-            window.location.replace(finalRedirectUrl);
+      // Tick every second
+      const intervalId = setInterval(() => {
+        seconds -= 1;
+        if (seconds <= 0) {
+          clearInterval(intervalId);
+          statusEl.textContent = "Redirecting...";
+          // Perform the redirect
+          window.location.replace(finalRedirectUrl);
+        } else {
+          countdownEl.textContent = seconds;
+        }
+      }, 1000);
 
-        })();
-</script>
+      // "Redirect now" link
+      document.getElementById("immediate").addEventListener("click", function (e) {
+        e.preventDefault();
+        clearInterval(intervalId);
+        window.location.replace(finalRedirectUrl);
+      });
+
+      // "Cancel redirect" link
+      document.getElementById("cancel").addEventListener("click", function (e) {
+        e.preventDefault();
+        clearInterval(intervalId);
+        statusEl.textContent = "Redirection cancelled.";
+      });
+    })();
+  </script>
 </body>
 </html>
- 
